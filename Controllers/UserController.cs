@@ -68,11 +68,13 @@ namespace TodoApi.Controllers
             var user = _context.Users.Find(idUser);
             var userFollowing = _context.Users.Find(idFollowing); 
 
-            if (user == null)
+            if (user == null || userFollowing == null)
             {
-                //Terminar
+                return new JsonResult(NotFound());
             }
 
+            userFollowing.Followers.Add(user);
+            return new JsonResult(Ok(userFollowing));
         }
         
     }

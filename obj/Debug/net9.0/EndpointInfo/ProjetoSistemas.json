@@ -75,7 +75,15 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "idUser",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "idFollowing",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -83,25 +91,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserModel"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -124,13 +113,6 @@
             "nullable": true
           },
           "followers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserModel"
-            },
-            "nullable": true
-          },
-          "following": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UserModel"

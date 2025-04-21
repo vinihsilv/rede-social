@@ -30,3 +30,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+Console.WriteLine("http://localhost:5010/swagger/v1/swagger.json");

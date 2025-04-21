@@ -50,12 +50,12 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "user",
-        "Type": "TodoApi.Models.UserModel",
-        "IsRequired": true
+        "Name": "idUser",
+        "Type": "System.Int32",
+        "IsRequired": false
       },
       {
-        "Name": "id",
+        "Name": "idFollowing",
         "Type": "System.Int32",
         "IsRequired": false
       }
