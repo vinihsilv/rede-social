@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjetoSistemas.Models;
 using TodoApi.Data;
 using TodoApi.Models;
 
@@ -19,24 +20,20 @@ namespace TodoApi.Controllers
         [HttpPost]
         public JsonResult CreateEditUser(UserModel user)
         {
-            if (user.UserId == 0)
-            {
+            var userExists = _context.Users.Find(user.UserId);
+
+            if (userExists == null) { 
                 _context.Users.Add(user);
             }
+
             else
             {
-                var userDb = _context.Users.Find(user.UserId);
-
-                if (userDb == null)
-                {
-                    return new JsonResult(NotFound());
-                }
-                userDb = user;
+                return new JsonResult(NotFound("User already exists, try again"));
             }
+
             _context.SaveChanges();
 
             return new JsonResult(Ok(user));
-
 
         }
         [HttpGet]
@@ -48,6 +45,7 @@ namespace TodoApi.Controllers
             {
                 return new JsonResult(NotFound());
             }
+
 
 
             return new JsonResult(result);
@@ -74,6 +72,8 @@ namespace TodoApi.Controllers
             }
 
             userFollowing.Followers.Add(user);
+
+            _context.SaveChanges();
             return new JsonResult(Ok(userFollowing));
         }
         

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
 using Microsoft.OpenApi.Models;
+using ProjetoSistemas.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,20 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<UserDB>();
+
+    context.Users.AddRange(
+        new UserModel(1,"Caue"),
+        new UserModel(2,"CaueJibbers")
+    );
+
+    context.SaveChanges();
+}
+
+
 app.Run();
 
 Console.WriteLine("http://localhost:5010/swagger/v1/swagger.json");

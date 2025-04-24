@@ -16,6 +16,9 @@ public class UserModel
         Followers = new List<UserModel>();
     }
 
-    
-
+    public UserModel(int id ,  string username)
+    {
+        UserId = id;
+        Username = username;
+    }
 }
