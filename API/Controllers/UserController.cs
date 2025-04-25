@@ -71,10 +71,11 @@ namespace TodoApi.Controllers
                 return new JsonResult(NotFound());
             }
 
-            userFollowing.Followers.Add(user);
+            userFollowing.Followers.Add(idUser);
+            user.Following.Add(idFollowing);
 
             _context.SaveChanges();
-            return new JsonResult(Ok(userFollowing));
+            return new JsonResult(Ok("Follow registrado com sucesso."));
         }
         
     }

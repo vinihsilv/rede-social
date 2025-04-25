@@ -36,8 +36,8 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<UserDB>();
 
     context.Users.AddRange(
-        new UserModel(1,"Caue"),
-        new UserModel(2,"CaueJibbers")
+        new UserModel("Caue",2,2),
+        new UserModel("CaueJibbers",1,1)
     );
 
     context.SaveChanges();
