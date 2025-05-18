@@ -23,17 +23,56 @@ namespace ProjetoSistemas.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddPost(int userId , string postText)
+        public async Task<JsonResult> AddPost(int userId , string postText)
         {
             var user = _context.Users.Find(userId);
 
             var newPost = new PostModel(user, DateTime.Now, postText);
-
             _context.Posts.Add(newPost);
             _context.SaveChanges();
 
+            // Payload para replicação
+            var replicationPayload = new
+            {
+                user = user.Username, // ou "userId" se preferir
+                content = postText,
+                timestamp = 0 // temporário; pode integrar relógio lógico depois
+            };
+
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(replicationPayload),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            // Tenta replicar para múltiplos servidores
+            using var httpClient = new HttpClient();
+            var replicas = new[]
+            {
+                "http://localhost:5001/post",
+                "http://localhost:5002/post",
+                "http://localhost:5003/post"
+            };
+
+            foreach (var url in replicas)
+            {
+                try
+                {
+                    var response = await httpClient.PostAsync(url, jsonContent);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine($"Falha na réplica para {url}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro replicando para {url}: {ex.Message}");
+                }
+            }
+
             return new JsonResult(newPost);
         }
+
 
         [HttpGet]
         public JsonResult Get()
