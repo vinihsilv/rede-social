@@ -20,3 +20,7 @@ Thumbs.db
 # Configs locais
 appsettings.*.json
 venv
+
+# Cache do python
+__pycache__/
+*.pyc
