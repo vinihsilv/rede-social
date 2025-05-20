@@ -22,10 +22,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Todo API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Projeto Sistemas API v1");
         c.RoutePrefix = "swagger";
     });
 }
+
+// 🔧 Essa linha é importante para acesso externo via Docker
+app.Urls.Add("http://0.0.0.0:5010");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
@@ -34,16 +37,11 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<UserDB>();
-
     context.Users.AddRange(
-        new UserModel("Caue",2,2),
-        new UserModel("CaueJibbers",1,1)
+        new UserModel("Caue", 2, 2),
+        new UserModel("CaueJibbers", 1, 1)
     );
-
     context.SaveChanges();
 }
 
-
 app.Run();
-
-Console.WriteLine("http://localhost:5010/swagger/v1/swagger.json");
