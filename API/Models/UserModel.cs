@@ -1,40 +1,20 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using NJsonSchema.Infrastructure;
-
-namespace ProjetoSistemas.Models;
-
 public class UserModel
 {
     [Key]
     public int UserId { get; set; }
     public string Username { get; set; }
-    public List<int>? Followers { get; set; }
-    public List<int>? Following { get; set; }
 
-    public UserModel()
-    {
-        Followers = new List<int>();
-        Following = new List<int>();
-    }
+    public virtual ICollection<UserFollowing> Followers { get; set; }
+    public virtual ICollection<UserFollowing> Following { get; set; }
+}
 
-    public UserModel(string username)
-    {
-        Followers = new List<int>();
-        Following = new List<int>();
-        Username = username;
-    }
+public class UserFollowing
+{
+    public int Id { get; set; }
 
-    //Retirar esse método antes de entregar, apenas adicionado para testar api mais facilmente.
-    public UserModel(string username, int follower, int follow)
-    {
-        Followers = new List<int>();
-        Following = new List<int>();
-        
-        Username = username;
-        Followers.Add(follower);
-        Following.Add(follow);
+    public int FollowerId { get; set; }
+    public UserModel Follower { get; set; }
 
-
-    }
+    public int FollowingId { get; set; }
+    public UserModel Following { get; set; }
 }

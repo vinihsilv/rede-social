@@ -6,7 +6,7 @@ using TodoApi.Models;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+
 
 namespace TodoApi.Controllers
 {
@@ -21,13 +21,13 @@ namespace TodoApi.Controllers
             _context = context;
         }
 
-        [HttpPost]
+       [HttpPost]
         public async Task<JsonResult> CreateEditUser(UserModel user)
         {
             var userExists = _context.Users.Find(user.UserId);
 
             if (userExists == null)
-            {
+            { 
                 _context.Users.Add(user);
             }
             else
@@ -37,6 +37,7 @@ namespace TodoApi.Controllers
 
             _context.SaveChanges();
 
+            // 🔁 Payload para replicação
             var replicationPayload = new
             {
                 action = "create_user",
@@ -79,17 +80,23 @@ namespace TodoApi.Controllers
         public JsonResult Get(int id)
         {
             var result = _context.Users.Find(id);
+
             if (result == null)
             {
                 return new JsonResult(NotFound());
             }
+
+
+
             return new JsonResult(result);
         }
+
 
         [HttpGet("/GetAll")]
         public JsonResult GetAll()
         {
             var result = _context.Users.ToList();
+
             return new JsonResult(Ok(result));
         }
 
@@ -97,7 +104,7 @@ namespace TodoApi.Controllers
         public async Task<JsonResult> NewFollow(int idUser, int idFollowing)
         {
             var user = _context.Users.Find(idUser);
-            var userFollowing = _context.Users.Find(idFollowing);
+            var userFollowing = _context.Users.Find(idFollowing); 
 
             if (user == null || userFollowing == null)
             {
@@ -145,6 +152,8 @@ namespace TodoApi.Controllers
             }
 
             return new JsonResult(Ok("Follow registrado com sucesso."));
-        }
+            }
+
+        
     }
 }
