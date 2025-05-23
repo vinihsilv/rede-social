@@ -9,7 +9,10 @@ public class UserDB : DbContext
 {
     public DbSet<UserModel> Users{ get; set; }
     public DbSet<PostModel> Posts{ get; set; }
-    public UserDB(DbContextOptions<UserDB> options): base(options){
+    public DbSet<Message> Messages { get; set; }
+
+    public UserDB(DbContextOptions<UserDB> options) : base(options)
+    {
 
     }
 
