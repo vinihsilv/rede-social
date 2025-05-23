@@ -58,12 +58,19 @@ def send_post():
 def view_feed():
     r = requests.get(f"{API_URL}/getUserFeed", params={"userId": LOGGED_USER["userId"]})
     if r.ok:
-        posts = r.json().get("value", [])
+        feed = r.json().get("value", [])
+        if not feed:
+            print("\n[INFO] Feed vazio. Siga usuários ou poste algo.")
+            return
         print("\n=== Feed ===")
-        for post in posts:
-            print(f"[{post['timestamp']}] @{post['user']['username']}: {post['postText']}")
+        for post in feed:
+            user = post["user"]["username"]
+            text = post["postText"]
+            timestamp = post["postTime"]  # <-- CORRIGIDO AQUI
+            print(f"[{timestamp}] @{user}: {text}")
     else:
         print(f"[ERRO] Falha ao carregar feed → {r.status_code}")
+
 
 def send_private_message():
     receiver_id = int(input("ID do destinatário: "))
