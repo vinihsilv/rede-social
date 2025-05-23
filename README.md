@@ -97,5 +97,5 @@ Feed individual
 
 Mensagens privadas
 
-Replicação entre múltiplos nós via Python
+
 
