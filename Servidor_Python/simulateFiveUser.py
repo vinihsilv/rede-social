@@ -22,9 +22,7 @@ def create_logged_user():
 
     user = {
         "userId": user_id,
-        "username": username,
-        "followers": [],
-        "following": []
+        "username": username
     }
 
     r = requests.post(f"{API_URL}/api/User", json=user)
@@ -38,7 +36,7 @@ def follow_users():
     qtd = int(input("Quantos usuários deseja seguir? "))
     for _ in range(qtd):
         id_following = int(input("ID do usuário a ser seguido: "))
-        r = requests.post(f"{API_URL}/NewFollow", params={
+        r = requests.post(f"{API_URL}/api/User/NewFollow", params={
             "idUser": LOGGED_USER["userId"],
             "idFollowing": id_following
         })
@@ -54,19 +52,18 @@ def send_post():
     time.sleep(random.uniform(0.5, 1.0))
     view_feed()  # mostra o feed automaticamente depois de postar
 
-
 def view_feed():
-    r = requests.get(f"{API_URL}/getUserFeed", params={"userId": LOGGED_USER["userId"]})
+    r = requests.get(f"{API_URL}/api/User/GetPostsByUser/{LOGGED_USER['userId']}")
     if r.ok:
-        feed = r.json().get("value", [])
+        feed = r.json()
         if not feed:
             print("\n[INFO] Feed vazio. Siga usuários ou poste algo.")
             return
         print("\n=== Feed ===")
         for post in feed:
             user = post["user"]["username"]
-            text = post["postText"]
-            timestamp = post["postTime"]  # <-- CORRIGIDO AQUI
+            text = post["content"]
+            timestamp = post["createdAt"]
             print(f"[{timestamp}] @{user}: {text}")
     else:
         print(f"[ERRO] Falha ao carregar feed → {r.status_code}")
@@ -128,3 +125,4 @@ if __name__ == "__main__":
             break
         else:
             print("Opção inválida.")
+
