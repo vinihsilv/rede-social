@@ -2,7 +2,8 @@ import requests
 import time
 import random
 
-API_URL = "http://host.docker.internal:5010"  # Porta da sua API .NET
+
+API_URL = "http://172.17.0.1:5010" # Porta da sua API .NET
 
 # 1. Criação de 5 usuários
 def create_users():
