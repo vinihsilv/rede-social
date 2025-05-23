@@ -2,54 +2,97 @@ import requests
 import time
 import random
 
+API_URL = input("Digite a URL base da API (ex: http://172.17.0.1:5010): ").strip()
 
-API_URL = "http://172.17.0.1:5010" # Porta da sua API .NET
-
-# 1. Criação de 5 usuários
 def create_users():
-    for i in range(1, 6):
+    qtd = int(input("Quantos usuários deseja criar? "))
+    for i in range(1, qtd + 1):
+        user_id = int(input(f"User {i} - ID: "))
+        username = input(f"User {i} - Username: ")
         user = {
-            "userId": i,
-            "username": f"user{i}",
+            "userId": user_id,
+            "username": username,
             "followers": [],
             "following": []
         }
         r = requests.post(f"{API_URL}/api/User", json=user)
-        print(f"Create User {i} → {r.status_code}")
+        print(f"[CREATE] User {user_id} → {r.status_code}")
 
-# 2. Todos seguem o próximo (1→2, 2→3, ...)
 def follow_users():
-    for i in range(1, 5):
+    qtd = int(input("Quantas conexões de follow deseja criar? "))
+    for _ in range(qtd):
+        id_user = int(input("ID do usuário que vai seguir: "))
+        id_following = int(input("ID do usuário a ser seguido: "))
         r = requests.post(f"{API_URL}/NewFollow", params={
-            "idUser": i,
-            "idFollowing": i+1
+            "idUser": id_user,
+            "idFollowing": id_following
         })
-        print(f"User {i} followed User {i+1} → {r.status_code}")
+        print(f"[FOLLOW] User {id_user} → User {id_following} → {r.status_code}")
 
-# 3. Cada usuário posta uma mensagem
+def send_post():
+    user_id = int(input("ID do usuário que está postando: "))
+    message = input("Texto do post: ")
+    r = requests.post(f"{API_URL}/api/Post", params={
+        "userId": user_id,
+        "postText": message
+    })
+    print(f"[POST] User {user_id}: '{message}' → {r.status_code}")
+    time.sleep(random.uniform(0.5, 1.0))  # atraso opcional
+
 def post_messages():
-    for i in range(1, 6):
-        post = f"Olá, eu sou o user{i}!"
-        r = requests.post(f"{API_URL}/api/Post", params={
-            "userId": i,
-            "postText": post
-        })
-        print(f"User {i} posted: '{post}' → {r.status_code}")
-        time.sleep(random.uniform(0.5, 1.0))  # pausa entre posts
+    qtd = int(input("Quantos posts deseja criar? "))
+    for _ in range(qtd):
+        send_post()
+
 def private_messages():
-    for i in range(1, 6):
-        message = f"olá user {i+1}, sou o user {i}"
+    qtd = int(input("Quantas mensagens privadas deseja enviar? "))
+    for _ in range(qtd):
+        sender_id = int(input("ID do remetente: "))
+        receiver_id = int(input("ID do destinatário: "))
+        message = input("Mensagem: ")
         params = {
-            "senderId": i,
-            "receiverId": i+1,
+            "senderId": sender_id,
+            "receiverId": receiver_id,
             "messageText": message
         }
         response = requests.post(f"{API_URL}/api/Post/sendMessage", params=params)
-        print(f"User {i} DMs: '{message}' → {response.status_code}")
+        print(f"[DM] User {sender_id} → {receiver_id}: '{message}' → {response.status_code}")
         time.sleep(random.uniform(0.5, 1.0))
 
+def get_all_posts():
+    response = requests.get(f"{API_URL}/api/Post")
+    print("\n=== [GET] All Posts ===")
+    if response.ok:
+        data = response.json().get("value", [])
+        for post in data:
+            print(post)
+    else:
+        print(f"[ERROR] GET posts → {response.status_code}")
+
+
 if __name__ == "__main__":
-    create_users()
-    follow_users()
-    post_messages()
-    private_messages()
+    print("Ações disponíveis:")
+    print("1 - Criar usuários")
+    print("2 - Seguir usuários")
+    print("3 - Criar posts")
+    print("4 - Enviar mensagens privadas")
+    print("5 - Ver todos os posts")
+    print("0 - Sair")
+
+    while True:
+        action = input("\nEscolha uma ação (0-5): ").strip()
+        if action == "1":
+            create_users()
+        elif action == "2":
+            follow_users()
+        elif action == "3":
+            post_messages()
+        elif action == "4":
+            private_messages()
+        elif action == "5":
+            get_all_posts()
+        elif action == "0":
+            print("Encerrando.")
+            break
+        else:
+            print("Opção inválida.")
